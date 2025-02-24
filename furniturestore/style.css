@@ -7,9 +7,9 @@ body {
   color: rgb(67, 41, 41);
 }
 nav {
-   z-index: 100;
-  position: fixed; 
-   width: 100%; 
+  z-index: 100;
+  position: fixed;
+  width: 100%;
   left: 0;
   display: flex;
   justify-content: space-between;
@@ -40,15 +40,15 @@ nav ul li a {
 nav ul li a:hover {
   color: #6b5240;
 }
-.small{
+.small {
   color: rgb(67, 41, 41);
   text-decoration: none;
   font-size: 15px;
   font-weight: bold;
   transition: color 0.3s ease;
-  margin-right:15px
+  margin-right: 15px;
 }
-.small:hover{
+.small:hover {
   color: #6b5240;
 }
 /* Hero Section */
@@ -220,60 +220,7 @@ footer {
   font-size: 16px;
   height: 30px;
 }
-/* Login & Signup Page */
-.auth-container {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 30px;
-  width: 350px;
-  height: 350px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  top: 150px;
-  left: 500px;
-  box-shadow: 10px 10px 50px #6b5240;
-}
-.auth-container h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-.auth-container input {
-  display: block;
-  width: 95%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-size: 16px;
-}
-.auth-container button {
-  background: rgb(67, 41, 41);
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s ease;
-  font-size: 16px;
-  width: 100%;
-  transition: 1s;
-}
-.auth-container button:hover {
-  background: #6b5240;
-  transform: scale(1.05);
-}
-.auth-container p {
-  margin-top: 15px;
-  font-size: 14px;
-}
-.auth-container p a {
-  color: #6b5240;
-  text-decoration: none;
-  font-weight: bold;
-}
-.auth-container p a:hover {
-  text-decoration: underline;
-}
+
 .products {
   padding: 20px;
 }

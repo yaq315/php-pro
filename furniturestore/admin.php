@@ -16,7 +16,7 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.html" data-section="home"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="index.php" data-section="home"><i class="fas fa-home"></i> Home</a></li>
                     <li><a href="#" data-section="orders"><i class="fas fa-cogs"></i> Manage Orders</a></li>
                     <li><a href="#" data-section="products"><i class="fas fa-box"></i> Manage Products</a></li>
                     <li><a href="#" data-section="users"><i class="fas fa-users"></i> Manage Users</a></li>
