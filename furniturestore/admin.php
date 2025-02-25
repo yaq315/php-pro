@@ -133,11 +133,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h3>Add New Order</h3>
-            <form id="addOrderForm">
-                <div class="form-group">
-                    <label for="orderId">Order Number</label>
-                    <input type="number" id="orderId" required>
-                </div>
+            <form id="addOrderForm" action=""  method="">
                 <div class="form-group">
                     <label for="orderUser">User</label>
                     <input type="text" id="orderUser" required>
