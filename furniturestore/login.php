@@ -11,8 +11,10 @@
 <?php
 session_start();
 
-// تعريف متغيرات الخطأ
+// استدعاء ملف الاتصال
+include 'db_config.php';  // تأكد من مسار الملف الصحيح
 
+// تعريف متغيرات الخطأ
 $errors = [
     "email" => "",
     "password" => ""
@@ -20,17 +22,9 @@ $errors = [
 
 // التحقق عند إرسال النموذج
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // الاتصال بقاعدة البيانات
-    $conn = new mysqli("localhost", "root", "", "furniture_store");
 
-    // التحقق من الاتصال
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // استقبال البيانات
-    $email = $conn->real_escape_string($_POST["email"]);
-    $password = $_POST["password"];
+    $email = trim($_POST["email"]);
+    $password = trim($_POST["password"]);
 
     // التحقق من ملء الحقول
     if (empty($email)) {
@@ -42,71 +36,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($password)) {
         $errors["password"] = "Password is required!";
     }
-
-    // إذا كانت هناك أخطاء، نعرضها باستخدام SweetAlert
-    if (!empty($errors["email"]) || !empty($errors["password"])) {
-        foreach ($errors as $key => $error) {
-            if (!empty($error)) {
-                echo "<script>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: '$error',
-                        confirmButtonText: 'OK'
-                    });
-                </script>";
-            }
-        }
-    } else {
+    
+    // إذا كانت هناك أخطاء في الحقول، نعرضها تحت الحقول في النموذج
+    if (empty($errors["email"]) && empty($errors["password"])) {
         // إذا لم تكن هناك أخطاء، يتم التحقق من البيانات في قاعدة البيانات
         $sql = "SELECT id, email, password FROM users WHERE email = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
+        if ($stmt) {
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $stmt->store_result();
 
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $db_email, $db_password);
-            $stmt->fetch();     
+            if ($stmt->num_rows > 0) {
+                $stmt->bind_result($id, $db_email, $db_password);
+                $stmt->fetch();     
 
-            // التحقق من كلمة المرور
-            if (password_verify($password, $db_password)) {
-                // نجاح تسجيل الدخول
-                $_SESSION["user_id"] = $id;
-                $_SESSION["email"] = $db_email;
+                // التحقق من كلمة المرور
+                if (password_verify($password, $db_password)) {
+                    // نجاح تسجيل الدخول
+                    $_SESSION["user_id"] = $id;
+                    $_SESSION["email"] = $db_email;
 
-                echo "<script>
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Login successful!',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = 'index.php';
-                    });
-                </script>";
+
+                    echo "<script>
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Login successful!',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = 'index.php';
+                        });
+                    </script>";
+                    exit(); 
+                } else {
+                    echo 
+                        $errors["password"]= "Incorrect password!";
+                  
+                }
             } else {
                 echo "<script>
                     Swal.fire({
-                        title: 'Error!',
-                        text: 'Incorrect password!',
+                        title: 'Oops!',
+                        text: 'Email not found! Please sign up first.',
                         icon: 'error',
                         confirmButtonText: 'Try Again'
                     });
                 </script>";
             }
+
+            $stmt->close();
         } else {
             echo "<script>
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Email not found!',
+                    text: 'Database error. Please try again later.',
                     icon: 'error',
-                    confirmButtonText: 'Try Again'
+                    confirmButtonText: 'OK'
                 });
             </script>";
         }
-
-        $stmt->close();
     }
 
     // إغلاق الاتصال بقاعدة البيانات
@@ -120,9 +109,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <img src="imges/logofurniture.png" alt="DECORA Logo">
         </div>
         <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html">Products</a></li>
-            <li><a href="cart.html">Cart</a></li>
+            <li><a href="index.php">Home</a></li>
+            <li><a href="products.php">Products</a></li>
+            <li><a href="cart.php">Cart</a></li>
         </ul>
     </nav> 
 </header>
@@ -134,13 +123,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form id="login-form" action="login.php" method="POST">
             <div class="input-field">
                 <input type="email" placeholder="Email" id="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                <?php if (!empty($errors["email"])): ?>
+                    <span class="error-message"><?= $errors["email"] ?></span>
+                <?php endif; ?>
             </div>
 
             <div class="input-field">
                 <input type="password" placeholder="Password" id="password" name="password">
+                <?php if (!empty($errors["password"])): ?>
+                    <span class="error-message"><?= $errors["password"] ?></span>
+                <?php endif; ?>
             </div>
 
-            <button  type="submit" class="login-button">Login</button>
+            <button type="submit" class="login-button">Login</button>
 
             <div class="signup-link">
                 <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
