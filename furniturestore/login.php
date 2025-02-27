@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = 'admin.php';
+                                window.location.href = './dashboard/index.php';
                             });
                         </script>";
                     } else {
