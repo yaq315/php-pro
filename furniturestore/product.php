@@ -50,9 +50,9 @@
 
       <div class="product-grid">
         <div class="product-card">
-          <img src="imges/1534cb86-60b2-43e3-a4b7-2f3f6dc329a1.f693b98e9f6c87b295e70e7af8a7cc5e.webp" alt="product"
+          <img src="imges/outdoor.webp" alt="product"
                     onmouseover="this.src='imges/Outdoor Chair 2.jpeg'" 
-                 onmouseout="this.src='imges/1534cb86-60b2-43e3-a4b7-2f3f6dc329a1.f693b98e9f6c87b295e70e7af8a7cc5e.webp'" />
+                 onmouseout="this.src='imges/outdoor.webp'" />
           <h3>Outdoor Chair</h3>
           <p>$69.99</p>
           <button onclick="addToCart('Wooden Chair', 69.99)">
