@@ -37,7 +37,7 @@ document
         title: "Welcome Admin",
         text: "You have successfully logged in as Admin!",
       }).then(() => {
-        window.location.href = "admin.php";
+        window.location.href = "./dashboard/index.php";
       });
       return;
     }
