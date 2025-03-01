@@ -1,13 +1,8 @@
 <?php
-session_start(); // بدء الجلسة لإظهار رسائل التنبيه
 include '../db_config.php'; // استيراد ملف اتصال قاعدة البيانات
 
-// جلب جميع الطلبات من قاعدة البيانات
-$orders = $conn->query("
-    SELECT o.id, o.order_date, o.total_amount, o.order_status, u.full_name AS user_name
-    FROM orders o
-    LEFT JOIN users u ON o.user_id = u.id
-")->fetch_all(MYSQLI_ASSOC);
+// جلب جميع الفئات من قاعدة البيانات
+$categories = $conn->query("SELECT * FROM categories")->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +10,7 @@ $orders = $conn->query("
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Management</title>
+    <title>Category Management</title>
     <link rel="stylesheet" href="../admin.css">
     <style>
         /* General Styles */
@@ -95,7 +90,7 @@ $orders = $conn->query("
             border: none;
             border-radius: 5px;
             font-size: 14px;
-            transition: background-color 0.3s ease;
+            background-color: #4CAF50;
             text-decoration: none;
             color: white;
             margin: 2px;
@@ -144,7 +139,7 @@ $orders = $conn->query("
             border-collapse: collapse;
             margin-top: 20px;
         }
-
+     
         table th, table td {
             padding: 12px;
             text-align: left;
@@ -162,6 +157,7 @@ $orders = $conn->query("
         }
 
         /* Modal Styles */
+
         .modal {
             display: none;
             position: fixed;
@@ -192,60 +188,72 @@ $orders = $conn->query("
         .close:hover {
             color: #f44336;
         }
+        .form.input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
 
-        
-    </style>
+
+.form.input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+
+.form.input select {
+    appearance: none; 
+    background-color: #fff;
+    cursor: pointer;
+}
+
+
+.form.input[type="file"] {
+    border: none;
+    background: #f9f9f9;
+    padding: 5px;
+    cursor: pointer;
+}
+
+
+ </style>
 </head>
 <body>
-
 <div class="sidebar">
     <div class="logo">
             <img src="../logofurniture.png" alt="Logo"> 
         </div>
         <ul>
             <li><a href="../index.php"><i class="fas fa-home"></i>Dashboard</a></li>
-            <li><a href="#"><i class="fas fa-users"></i>orderes Management</a></li>
+            <li><a href="#"><i class="fas fa-users"></i>categories Management</a></li>
            
         </ul>
     </div>
+
     <div class="main-content">
-        <h1>Order Management</h1>
-
-
-        <!-- عرض رسائل التنبيه -->
-        <?php if (isset($_SESSION['message'])): ?>
-            <div class="alert alert-success"><?= $_SESSION['message'] ?></div>
-            <?php unset($_SESSION['message']); ?>
-        <?php endif; ?>
-
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-error"><?= $_SESSION['error'] ?></div>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
-
-       
-        <table>
+        <h1>Category Management</h1>
+        <button onclick="openModal()" class="btn">Add New Category</button>
+        <table >
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Order Date</th>
-                    <th>Total Amount</th>
-                    <th>Status</th>
-                    <th>User</th>
+                    <th>Name</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($orders as $order): ?>
+                <?php foreach ($categories as $category): ?>
                     <tr>
-                        <td><?= $order['id'] ?></td>
-                        <td><?= $order['order_date'] ?></td>
-                        <td>$<?= number_format($order['total_amount'], 2) ?></td>
-                        <td><?= ucfirst($order['order_status']) ?></td>
-                        <td><?= $order['user_name'] ?></td>
-                        <td>
-                            <a href="javascript:void(0);" onclick="openEditModal(<?= $order['id'] ?>)" class="btn btn-edit">Edit</a>
-                            <a href="process_order.php?action=delete&id=<?= $order['id'] ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this order?')">Delete</a>
+                        <td><?= $category['id'] ?></td>
+                        <td><?= $category['name'] ?></td>
+                        <td class="botton">
+                            <a href="javascript:void(0);" onclick="openEditModal(<?= $category['id'] ?>)" class="btn btn-edit">Edit</a>
+                            <a href="process_category.php?action=delete&id=<?= $category['id'] ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -253,50 +261,52 @@ $orders = $conn->query("
         </table>
     </div>
 
-    
-   
-
-    <!-- Modal for editing an order -->
-    <div id="editOrderModal" class="modal">
+    <!-- Modal Window -->
+    <div id="categoryModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
-            <h2>Edit Order</h2>
-            <form id="editOrderForm" action="process_order.php?action=edit&id=" method="POST">
-                <input type="hidden" id="edit_id" name="id">
-                <label for="edit_status">Status:</label>
-                <select id="edit_status" name="status" required>
-                    <option value="Pending">Pending</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select><br><br>
-                <button type="submit" class="btn btn-edit">Save Changes</button>
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add New Category</h2>
+            <form id="categoryForm" action="process_category.php" method="POST">
+                <input type="hidden" id="category_id" name="id">
+                <input type="hidden" name="action" id="formAction" value="add">
+                <label for="name">Category Name:</label>
+                <input class="form input" type="text" id="name" name="name" required><br><br>
+                <button type="submit" class="btn">Save</button>
             </form>
         </div>
     </div>
 
     <script>
-   
+        function openModal() {
+            document.getElementById('category_id').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('modalTitle').innerText = 'Add New Category';
+            document.getElementById('formAction').value = 'add';
+            document.getElementById('categoryModal').style.display = 'flex';
+        }
 
-        // Open the "Edit Order" modal
-        function openEditModal(orderId) {
-            fetch(`fetch_order.php?id=${orderId}`)
+        function openEditModal(categoryId) {
+            fetch(`fetch_category.php?id=${categoryId}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('edit_id').value = data.id;
-                    document.getElementById('edit_status').value = data.status;
-
-                    // تحديث الإجراء داخل الفورم
-                    document.getElementById('editOrderForm').action = `process_order.php?action=edit&id=${data.id}`;
-
-                    document.getElementById('editOrderModal').style.display = 'flex';
-                });
+                    if (data.error) {
+                        alert("Error: " + data.error);
+                        return;
+                    }
+                    document.getElementById('category_id').value = data.id;
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('modalTitle').innerText = 'Edit Category';
+                    document.getElementById('formAction').value = 'edit';
+                    document.getElementById('categoryModal').style.display = 'flex';
+                })
+                .catch(error => console.error("Error fetching data:", error));
         }
 
-        // Close the "Edit Order" modal
-        function closeEditModal() {
-            document.getElementById('editOrderModal').style.display = 'none';
+        function closeModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+            document.getElementById('categoryForm').reset();
         }
     </script>
+
 </body>
 </html>

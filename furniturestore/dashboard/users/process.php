@@ -99,8 +99,8 @@ if ($action === 'add') {
         exit;
     }
 } elseif ($action === 'delete') {
-    // حذف المستخدم
-    $id = intval($id); // تأمين قيمة المعرف
+
+    $id = intval($id); 
     $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
     $stmt->bind_param("i", $id);
     if ($stmt->execute()) {

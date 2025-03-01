@@ -28,6 +28,7 @@ $products_count_data = $conn->query("
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </head>
 <body>
     <!-- Sidebar -->
@@ -68,12 +69,12 @@ $products_count_data = $conn->query("
                     <span>Payments</span>
                 </a>
             </li>
-
             <li>
-                <a href="catagories/catagory.php">
-                    <i class="bi bi-grid"></i> 
-                    <span>catagories</span>
-                </a>
+            <a href="catagories/categories.php">
+                 <i class="fas fa-th"></i> 
+                 <span>Categories</span>
+            </a>
+
             </li>
         </ul>
     </div>
@@ -134,7 +135,6 @@ $products_count_data = $conn->query("
             <canvas id="salesChart"></canvas>
         </div>
 
-        <!-- Second Chart Section -->
         <div class="chart-container">
             <canvas id="productsChart"></canvas>
         </div>
@@ -142,22 +142,22 @@ $products_count_data = $conn->query("
 
     <!-- Chart Scripts -->
     <script>
-        // First Chart: Sales by Category
+        // First Chart: Sales by Category (Line Chart)
         const salesData = <?php echo json_encode($sales_data); ?>;
         const salesLabels = salesData.map(sale => sale.category_name);
         const salesValues = salesData.map(sale => sale.total_sales);
 
         const salesCtx = document.getElementById('salesChart').getContext('2d');
         const salesChart = new Chart(salesCtx, {
-            type: 'bar', 
+            type: 'line', 
             data: {
                 labels: salesLabels, 
                 datasets: [{
                     label: 'Total Sales', 
                     data: salesValues,
-                    backgroundColor: 'rgba(139, 115, 85, 0.6)', 
-                    borderColor: 'rgba(139, 115, 85, 1)', 
-                    borderWidth: 1 
+                    borderColor: '#8B7355', // Brown
+                    backgroundColor: 'rgba(139, 115, 85, 0.2)', // Light brown with transparency
+                    borderWidth: 2 
                 }]
             },
             options: {
@@ -199,7 +199,7 @@ $products_count_data = $conn->query("
             }
         });
 
-        // Second Chart: Products Count by Category
+        // Second Chart: Products Count by Category (Bar Chart)
         const productsCountData = <?php echo json_encode($products_count_data); ?>;
         const productsCountLabels = productsCountData.map(product => product.category_name);
         const productsCountValues = productsCountData.map(product => product.products_count);
@@ -212,8 +212,8 @@ $products_count_data = $conn->query("
                 datasets: [{
                     label: 'Products Count', 
                     data: productsCountValues,
-                    backgroundColor: 'rgba(107, 142, 35, 0.6)', // Olive green with transparency
-                    borderColor: 'rgba(107, 142, 35, 1)', // Olive green
+                    backgroundColor: '#6B8E23', // Olive green
+                    borderColor: '#556B2F', // Darker olive green
                     borderWidth: 1 
                 }]
             },

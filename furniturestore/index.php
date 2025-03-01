@@ -12,10 +12,10 @@
     />
   </head>
   <body>
-    <!-- ✅ Navbar -->
+    
    <?php include 'nav.php'; ?>
 
-    <!-- ✅ Hero Section -->
+    
     <section class="hero">
       <div class="hero-card">
         <h2>Find Your Perfect Furniture</h2>
@@ -23,8 +23,6 @@
         <button onclick="window.location.href='product.php'">Shop Now</button>
       </div>
     </section>
-
-    <!-- ✅ Featured Products -->
     <section class="featured-products">
       <h2>Featured Products</h2>
       <div class="product-grid">
@@ -32,32 +30,56 @@
           <img src="imges/sofa.jpeg" alt="Sofa" />
           <h3>Modern Sofa</h3>
           <p>$299.99</p>
-          <button>Add to Cart</button>
         </div>
         <div class="product-card">
           <img src="imges/product2.jpg" alt="Chair" />
           <h3>Elegant Chair</h3>
           <p>$99.99</p>
-          <button>Add to Cart</button>
+         
         </div>
         <div class="product-card">
           <img src="imges/product3.jpeg" alt="Table" />
           <h3>Wooden Table</h3>
           <p>$149.99</p>
-          <button>Add to Cart</button>
+         
         </div>
       </div>
     </section>
 
     <!-- ✅ Promotional Banner -->
     <section class="promo-banner">
-      <h2><i class="fas fa-gift"></i> Special Discount - Up to 50% Off!</h2>
-      <p>Hurry, limited time offer.</p>
-      <button onclick="window.location.href='product.php'">
-        <i class="fas fa-arrow-right"></i> Shop Now
-      </button>
-    </section>
-
+  <div class="promo-content">
+    <h2><i class="fas fa-gift"></i> Special Discount - Up to 50% Off!</h2>
+    <p>Hurry, limited time offer.</p>
+    <button onclick="window.location.href='sale-products.php'">
+      <i class="fas fa-arrow-right"></i> Shop Now
+    </button>
+  </div>
+</section>
+<!-- ✅ Best Sellers Section -->
+<section class="best-sellers">
+  <h2>Best Sellers</h2>
+  <div class="product-grid">
+    <div class="product-card">
+      <img src="imges/Wardrobe 2.jpg" alt="Best Seller 1" />
+      <h3>warddrobe</h3>
+      <p>$499.99</p>
+     
+    </div>
+    <div class="product-card">
+      <img src="imges/outdoor.webp" alt="Best Seller 2" />
+      <h3>outdoor_chair</h3>
+      <p>$99.00</p>
+     
+    </div>
+    <div class="product-card">
+      <img src="imges/Dining Table.jpeg" alt="Best Seller 3" />
+      <h3>Classic Dining Table</h3>
+      <p>$349.99</p>
+   
+    </div>
+  </div>
+</section>
     <!-- ✅ Contact Us -->
    <div class="contact-wrapper">
     <!-- قسم Contact Us -->
