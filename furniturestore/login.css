@@ -45,18 +45,32 @@ nav ul li a {
 
 nav ul li a:hover {
   color: #6b5240;
-}     
-
+}
+.small {
+  color: rgb(67, 41, 41);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+  margin-right: 15px;
+}
+.small:hover {
+  color: #6b5240;
+}
+.auth-section{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
 .auth-container {
   background: rgba(255, 255, 255, 0.9);
   padding: 30px;
   width: 450px;
   border-radius: 10px;
   box-shadow: 10px 10px 50px #6b5240;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+ 
+  /* transform: translate(-50%, -50%); */
   height: 50vh;
 }
 
@@ -106,4 +120,7 @@ nav ul li a:hover {
 .login-button:hover {
   background: #6b5240;
   transform: scale(1.05);
+}
+.signup-link{
+  margin-top: 20px;
 }

@@ -1,15 +1,14 @@
 <?php
-include '../db_config.php';
+include '../db_config.php'; // استيراد ملف اتصال قاعدة البيانات
 
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $query = "SELECT * FROM categories WHERE id = $id";
-    $result = $conn->query($query);
-    if ($result->num_rows > 0) {
-        $data = $result->fetch_assoc();
-        echo json_encode($data);
-    } else {
-        echo json_encode([]);
-    }
-}
+$id = $_GET['id'] ?? 0;
+
+$stmt = $conn->prepare("SELECT * FROM categories WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$category = $result->fetch_assoc();
+
+header('Content-Type: application/json');
+echo json_encode($category);
 ?>

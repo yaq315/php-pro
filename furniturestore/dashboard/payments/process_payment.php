@@ -1,51 +1,70 @@
 <?php
-include '../db_config.php';
+include '../db_config.php'; // استيراد ملف اتصال قاعدة البيانات
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Add Payment
-    if (isset($_POST['add_payment'])) {
-        $order_id = $_POST['order_id'];
-        $amount = $_POST['amount'];
-        $payment_status = $_POST['payment_status'];
-        $payment_method = $_POST['payment_method'];
+$action = $_GET['action'] ?? ''; // تحديد الإجراء المطلوب
+$id = $_GET['id'] ?? 0; // الحصول على معرف الدفعة
 
-        $sql = "INSERT INTO payments (order_id, amount, payment_status, payment_method) 
-                VALUES ('$order_id', '$amount', '$payment_status', '$payment_method')";
-        if ($conn->query($sql)) {
-            echo "<script>alert('Payment added successfully!'); window.location.href='payments.php';</script>";
+if ($action === 'add') {
+    // إضافة دفعة جديدة
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $payment_date = trim($_POST['payment_date']);
+        $amount = floatval($_POST['amount']);
+        $payment_status = trim($_POST['payment_status']);
+        $payment_method = trim($_POST['payment_method']);
+        $order_id = intval($_POST['order_id']);
+
+        // إدخال الدفعة في قاعدة البيانات
+        $stmt = $conn->prepare("INSERT INTO payments (payment_date, amount, payment_status, payment_method, order_id) VALUES (?, ?, ?, ?, ?)");
+        if ($stmt) {
+            $stmt->bind_param("sdssi", $payment_date, $amount, $payment_status, $payment_method, $order_id);
+            if ($stmt->execute()) {
+                header("Location: payments.php");
+                exit;
+            } else {
+                echo "Error adding payment: " . $stmt->error;
+            }
         } else {
-            echo "<script>alert('Error adding payment: " . $conn->error . "');</script>";
+            echo "Error preparing statement: " . $conn->error;
         }
     }
+} elseif ($action === 'edit') {
+    // تعديل الدفعة
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = intval($_POST['id']);
+        $payment_date = trim($_POST['payment_date']);
+        $amount = floatval($_POST['amount']);
+        $payment_status = trim($_POST['payment_status']);
+        $payment_method = trim($_POST['payment_method']);
+        $order_id = intval($_POST['order_id']);
 
-    // Edit Payment
-    elseif (isset($_POST['edit_payment'])) {
-        $payment_id = $_POST['payment_id'];
-        $order_id = $_POST['order_id'];
-        $amount = $_POST['amount'];
-        $payment_status = $_POST['payment_status'];
-        $payment_method = $_POST['payment_method'];
-
-        $sql = "UPDATE payments 
-                SET order_id='$order_id', amount='$amount', payment_status='$payment_status', payment_method='$payment_method' 
-                WHERE id='$payment_id'";
-        if ($conn->query($sql)) {
-            echo "<script>alert('Payment updated successfully!'); window.location.href='payments.php';</script>";
+        // تحديث الدفعة في قاعدة البيانات
+        $stmt = $conn->prepare("UPDATE payments SET payment_date=?, amount=?, payment_status=?, payment_method=?, order_id=? WHERE id=?");
+        if ($stmt) {
+            $stmt->bind_param("sdssii", $payment_date, $amount, $payment_status, $payment_method, $order_id, $id);
+            if ($stmt->execute()) {
+                header("Location: payments.php");
+                exit;
+            } else {
+                echo "Error updating payment: " . $stmt->error;
+            }
         } else {
-            echo "<script>alert('Error updating payment: " . $conn->error . "');</script>";
+            echo "Error preparing statement: " . $conn->error;
         }
     }
-
-    // Delete Payment
-    elseif (isset($_POST['delete_payment'])) {
-        $payment_id = $_POST['delete_payment'];
-
-        $sql = "DELETE FROM payments WHERE id='$payment_id'";
-        if ($conn->query($sql)) {
-            echo "<script>alert('Payment deleted successfully!'); window.location.href='payments.php';</script>";
+} elseif ($action === 'delete') {
+    // حذف الدفعة
+    $id = intval($id); // تأمين قيمة المعرف
+    $stmt = $conn->prepare("DELETE FROM payments WHERE id=?");
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+        if ($stmt->execute()) {
+            header("Location: payments.php");
+            exit;
         } else {
-            echo "<script>alert('Error deleting payment: " . $conn->error . "');</script>";
+            echo "Error deleting payment: " . $stmt->error;
         }
+    } else {
+        echo "Error preparing statement: " . $conn->error;
     }
 }
 ?>

@@ -6,6 +6,11 @@
     <title>Login - DECORA</title>
     <link rel="stylesheet" href="login.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="imges/logofurniture.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
 </head>
 <body>
 <?php
@@ -103,20 +108,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 
-<header>
-    <nav>
-        <div class="logo">
-            <img src="imges/logofurniture.png" alt="DECORA Logo">
-        </div>
-        <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="products.php">Products</a></li>
-            <li><a href="cart.php">Cart</a></li>
-        </ul>
-    </nav> 
-</header>
+<?php include 'nav.php'; ?>
 
 <!-- Login Form -->
+ <div class="full">
 <section class="auth-section">
     <div class="auth-container">
         <h2>Login</h2>
@@ -143,6 +138,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 </section>
+</div>
+
+    <?php include 'footer.php'; ?>
+
 
 </body>
 </html>

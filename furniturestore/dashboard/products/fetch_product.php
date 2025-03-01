@@ -1,15 +1,31 @@
 <?php
-include '../db_config.php';
+include '../db_config.php'; // استيراد ملف اتصال قاعدة البيانات
 
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $query = "SELECT * FROM products WHERE id = $id";
-    $result = $conn->query($query);
+// الحصول على معرف المنتج من الرابط
+$id = intval($_GET['id'] ?? 0); // تأمين قيمة المعرف
+
+// جلب بيانات المنتج من قاعدة البيانات
+$query = "SELECT id, name, price, stock_quantity, category_id, supplier_id, image FROM products WHERE id = ?";
+$stmt = $conn->prepare($query);
+
+if ($stmt) {
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     if ($result->num_rows > 0) {
-        $data = $result->fetch_assoc();
-        echo json_encode($data);
+        // إرجاع بيانات المنتج كـ JSON
+        echo json_encode($result->fetch_assoc());
     } else {
-        echo json_encode([]);
+        // إذا لم يتم العثور على المنتج
+        echo json_encode(['error' => 'Product not found']);
     }
+
+    $stmt->close();
+} else {
+    // في حالة وجود خطأ في إعداد الاستعلام
+    echo json_encode(['error' => 'Database query error']);
 }
+
+$conn->close();
 ?>

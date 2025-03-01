@@ -68,6 +68,13 @@ $products_count_data = $conn->query("
                     <span>Payments</span>
                 </a>
             </li>
+
+            <li>
+                <a href="catagories/catagory.php">
+                    <i class="bi bi-grid"></i> 
+                    <span>catagories</span>
+                </a>
+            </li>
         </ul>
     </div>
 

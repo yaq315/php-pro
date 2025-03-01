@@ -1,44 +1,74 @@
 <?php
-include '../db_config.php';
+session_start(); // بدء الجلسة لإظهار رسائل التنبيه
+include '../db_config.php'; // استيراد ملف اتصال قاعدة البيانات
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_order'])) {
-        $user_id = $_POST['user_id'];
-        $order_date = $_POST['order_date'];
-        $order_status = $_POST['order_status'];
-        $total_amount = $_POST['total_amount'];
+$action = $_GET['action'] ?? ''; // تحديد الإجراء المطلوب
+$id = $_GET['id'] ?? 0; // الحصول على معرف الطلب
 
-        $sql = "INSERT INTO orders (user_id, order_date, order_status, total_amount) 
-                VALUES ('$user_id', '$order_date', '$order_status', '$total_amount')";
-        if ($conn->query($sql)) {
-            echo "<script>alert('Order added successfully!'); window.location.href='orders.php';</script>";
-        } else {
-            echo "<script>alert('Error adding order: " . $conn->error . "'); window.location.href='orders.php';</script>";
+if ($action === 'add') {
+    // إضافة طلب جديد
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $order_date = trim($_POST['order_date']);
+        $total_amount = floatval($_POST['total_amount']);
+        $status = trim($_POST['status']);
+        $user_id = intval($_POST['user_id']);
+
+        // التحقق من الحقول الفارغة
+        if (empty($order_date) || empty($total_amount) || empty($status) || empty($user_id)) {
+            $_SESSION['error'] = "All fields are required!";
+            header("Location: orders.php");
+            exit;
         }
-    } elseif (isset($_POST['edit_order'])) {
-        $order_id = $_POST['order_id'];
-        $user_id = $_POST['user_id'];
-        $order_date = $_POST['order_date'];
-        $order_status = $_POST['order_status'];
-        $total_amount = $_POST['total_amount'];
 
-        $sql = "UPDATE orders 
-                SET user_id='$user_id', order_date='$order_date', order_status='$order_status', total_amount='$total_amount' 
-                WHERE id='$order_id'";
-        if ($conn->query($sql)) {
-            echo "<script>alert('Order updated successfully!'); window.location.href='orders.php';</script>";
+        // إدخال الطلب في قاعدة البيانات
+        $stmt = $conn->prepare("INSERT INTO orders (order_date, total_amount, order_status, user_id) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sdsi", $order_date, $total_amount, $status, $user_id);
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Order added successfully!";
         } else {
-            echo "<script>alert('Error updating order: " . $conn->error . "'); window.location.href='orders.php';</script>";
+            $_SESSION['error'] = "Error adding order: " . $stmt->error;
         }
-    } elseif (isset($_POST['delete_order'])) {
-        $order_id = $_POST['order_id'];
 
-        $sql = "DELETE FROM orders WHERE id='$order_id'";
-        if ($conn->query($sql)) {
-            echo "<script>alert('Order deleted successfully!'); window.location.href='orders.php';</script>";
-        } else {
-            echo "<script>alert('Error deleting order: " . $conn->error . "'); window.location.href='orders.php';</script>";
-        }
+        header("Location: orders.php");
+        exit;
     }
+} elseif ($action === 'edit') {
+    // تعديل الطلب
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = intval($_POST['id']);
+        $status = trim($_POST['status']);
+
+        // التحقق من الحقول الفارغة
+        if (empty($status)) {
+            $_SESSION['error'] = "Status is required!";
+            header("Location: orders.php");
+            exit;
+        }
+
+        // تحديث حالة الطلب
+        $stmt = $conn->prepare("UPDATE orders SET order_status=? WHERE id=?");
+        $stmt->bind_param("si", $status, $id);
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Order updated successfully!";
+        } else {
+            $_SESSION['error'] = "Failed to update order: " . $stmt->error;
+        }
+
+        header("Location: orders.php");
+        exit;
+    }
+} elseif ($action === 'delete') {
+    // حذف الطلب
+    $id = intval($id); // تأمين قيمة المعرف
+    $stmt = $conn->prepare("DELETE FROM orders WHERE id=?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        $_SESSION['message'] = "Order deleted successfully!";
+    } else {
+        $_SESSION['error'] = "Failed to delete order: " . $stmt->error;
+    }
+
+    header("Location: orders.php");
+    exit;
 }
 ?>

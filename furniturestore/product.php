@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Products - DRCORA</title>
     <link rel="stylesheet" href="product.css" />
+    <link rel="icon" type="image/png" href="imges/logofurniture.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
   </head>
   <body>
-    <header>
-      <nav>
-        <h1>DECORA</h1>
-        <ul>
-          <li><a href="index.php">Home</a></li>
-          <li><a href="products.html">Products</a></li>
-          <li><a href="cart.php">Cart</a></li>
-        </ul>
-      </nav>
-    </header>
+    <?php include 'nav.php'; ?>
     <h2 class="mar">Our Products</h2>
     <div class="img">
     <section class="products">
@@ -162,7 +158,12 @@
       
       </div>
     </section>
+    <?php include 'footer.php'; ?>
+
 
     <script src="script.js"></script>
   </body>
 </html>
+
+
+
